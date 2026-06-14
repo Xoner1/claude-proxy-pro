@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Claude Proxy Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/styles.css">
+    <script>
+    window.addEventListener('error', (event) => {
+        fetch('http://localhost:8082/api/debug-log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'error',
+                message: event.message,
+                source: event.filename,
+                line: event.lineno,
+                col: event.colno,
+                stack: event.error ? event.error.stack : ''
+            })
+        }).catch(() => {});
+    });
+    window.addEventListener('unhandledrejection', (event) => {
+        fetch('http://localhost:8082/api/debug-log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'unhandledrejection',
+                reason: String(event.reason)
+            })
+        }).catch(() => {});
+    });
+    </script>
+</head>
+<body>
+
+<div class="titlebar">
+    <span class="titlebar-text">Claude Proxy Pro</span>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo-screen-container">
+        <div class="tamagotchi-screen">
+            <div id="crabMascot" class="crab-mascot">
+                <svg viewBox="0 0 16 12" width="64" height="48" fill="#D97757" shape-rendering="crispEdges">
+                    <rect x="2" y="1" width="12" height="8" />
+                    <rect x="0" y="4" width="2" height="3" />
+                    <rect x="14" y="4" width="2" height="3" />
+                    <rect x="3" y="9" width="1.5" height="3" />
+                    <rect x="5.5" y="9" width="1.5" height="3" />
+                    <rect x="9" y="9" width="1.5" height="3" />
+                    <rect x="11.5" y="9" width="1.5" height="3" />
+                    <rect x="4" y="3" width="2" height="3" fill="#151412" class="crab-eye" />
+                    <rect x="10" y="3" width="2" height="3" fill="#151412" class="crab-eye" />
+                </svg>
+                <div id="crabBubble" class="crab-bubble">✔ OK!</div>
+            </div>
+        </div>
+        <div class="brand-text">Claude Proxy Pro</div>
+        <div id="activeModelDisplay" class="active-model-badge">Initializing...</div>
+    </div>
+    <div class="nav">
+        <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            </span>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-page="models" onclick="showPage('models')">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </span>
+            <span>Models</span>
+        </div>
+        <div class="nav-item" data-page="providers" onclick="showPage('providers')">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+            </span>
+            <span>Providers</span>
+        </div>
+        <div class="nav-item" data-page="settings" onclick="showPage('settings')">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </span>
+            <span>Settings</span>
+        </div>
+    </div>
+    <div class="sidebar-footer">
+        <span class="status-dot online" id="statusDot"></span>
+        <span id="statusText">Connected</span>
+        <br><small id="uptimeText">Uptime: --</small>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+    <!-- ═══════ Dashboard Page ═══════ -->
+    <div class="page active" id="page-dashboard">
+        <div class="page-title" style="margin-bottom: 24px;">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            Dashboard
+        </div>
+
+        <!-- Simple Gateway Hero -->
+        <div class="glass-panel" style="margin-bottom: 24px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;">
+                <div class="gateway-url-box" style="margin: 0; background: rgba(0,0,0,0.2); box-shadow: none;">
+                    <div class="pulse-dot" style="width: 8px; height: 8px; animation: none; opacity: 1;"></div>
+                    <code class="gateway-url">http://127.0.0.1:8081</code>
+                    <button class="btn btn-sm btn-secondary" onclick="navigator.clipboard.writeText('http://127.0.0.1:8081'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 2000);">Copy</button>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Active Model</div>
+                    <div class="active-model-jewel" id="activeModelDisplay" style="font-size: 1.1rem; text-shadow: none;">Initializing...</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-around; gap: 20px;">
+                <div class="g-stat"><span class="g-lbl" style="margin-top: 0; margin-bottom: 8px;">Requests</span><span class="g-val" id="statRequests">0</span></div>
+                <div class="g-stat"><span class="g-lbl" style="margin-top: 0; margin-bottom: 8px;">Avg Latency</span><span class="g-val" id="statLatency">0ms</span></div>
+                <div class="g-stat"><span class="g-lbl" style="margin-top: 0; margin-bottom: 8px;">Tokens Used</span><span class="g-val" id="statTokens">0</span></div>
+                <div class="g-stat"><span class="g-lbl" style="margin-top: 0; margin-bottom: 8px;">Uptime</span><span class="g-val" id="uptimeBadge">--</span></div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Left: Activity Feed -->
+            <div class="feed-col glass-panel">
+                <h3>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Live Data Stream
+                </h3>
+                <div id="requestLog" class="activity-log">
+                    <div class="empty-feed">
+                        <div class="pulse-dot"></div>
+                        <p style="font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.5px;">Awaiting Neural Link on Port 8081...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Health & Nodes -->
+            <div class="side-col">
+                <div class="glass-panel">
+                    <h3>Network Health</h3>
+                    <div class="health-metrics">
+                        <div class="hm-item">
+                            <span class="hm-lbl">Total Errors</span>
+                            <span class="hm-val error" id="totalErrors">0</span>
+                        </div>
+                        <div class="hm-item">
+                            <span class="hm-lbl">Retries/Failovers</span>
+                            <span class="hm-val"><span id="totalRetries">0</span> / <span id="totalFailovers">0</span></span>
+                        </div>
+                    </div>
+                    <div class="health-bar-mini"><div class="bar-fill" id="healthBar" style="width:100%;background:var(--green)"></div></div>
+                    
+                    <div class="mini-toggles">
+                        <div class="toggle-row">
+                            <span>Auto-Retry</span>
+                            <div class="toggle active" id="autoRetryToggle" onclick="toggleSetting2('auto_retry')"></div>
+                        </div>
+                        <div class="toggle-row">
+                            <span>Failover</span>
+                            <div class="toggle active" id="failoverToggle" onclick="toggleSetting2('failover')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h3>Active Nodes</h3>
+                    <div id="providerNodes" class="nodes-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ Models Page ═══════ -->
+    <div class="page" id="page-models">
+        <div class="page-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                Model Manager
+            </div>
+            <button class="btn btn-secondary" onclick="discoverAll()" style="font-size:0.85rem; padding:6px 12px; height:auto">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5"/></svg>
+                Sync Models
+            </button>
+        </div>
+
+        <div class="model-toolbar">
+            <div class="search-box">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" id="modelSearch" placeholder="Search models..." oninput="renderModels()">
+            </div>
+            <div class="segmented-control">
+                <div class="seg-item active" onclick="setModelFilter('all',this)">All</div>
+                <div class="seg-item" onclick="setModelFilter('free',this)">Free</div>
+                <div class="seg-item" onclick="setModelFilter('paid',this)">Paid</div>
+            </div>
+        </div>
+
+        <div class="model-list-header">
+            <div class="ml-col ml-name" onclick="sortModels('id')">Model ↕</div>
+            <div class="ml-col ml-stats">
+                <span onclick="sortModels('context_size')">Context ↕</span>
+                <span onclick="sortModels('pricing')">Type ↕</span>
+                <span onclick="sortModels('latency_ms')">Latency ↕</span>
+            </div>
+            <div class="ml-col ml-action">Action</div>
+        </div>
+
+        <div id="modelsList" class="model-list-container">
+            <!-- Models will be injected here by JS -->
+        </div>
+    </div>
+
+    <!-- ═══════ Providers Page ═══════ -->
+    <div class="page" id="page-providers">
+        <div class="page-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                Provider Management
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button class="btn btn-primary" onclick="showAddProvider()">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Add Provider
+                </button>
+                <button class="btn btn-secondary" onclick="discoverAll()">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5"/></svg>
+                    Discover Models
+                </button>
+            </div>
+        </div>
+
+        <div id="providersList" class="provider-rack-list">
+            <!-- Racks will be injected here by JS -->
+        </div>
+    </div>
+
+    <!-- ═══════ Settings Page ═══════ -->
+    <div class="page" id="page-settings">
+        <div class="page-title">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Settings & Logs
+        </div>
+
+        <div class="settings-grid">
+            <!-- Network Core -->
+            <div class="setting-card">
+                <h3>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Network Core
+                </h3>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Server Port</h4>
+                        <p>Port for the Anthropic-compatible API</p>
+                    </div>
+                    <input type="number" id="portConfig" class="pro-input" value="8082">
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Health Check Interval</h4>
+                        <p>Seconds between active provider checks</p>
+                    </div>
+                    <input type="number" id="checkInterval" class="pro-input" value="60" min="10" max="300">
+                </div>
+            </div>
+
+            <!-- Stability Engine -->
+            <div class="setting-card">
+                <h3>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Stability Engine
+                </h3>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Auto-Retry on Failure</h4>
+                        <p>Retry failed requests behind the scenes</p>
+                    </div>
+                    <div class="toggle active" id="autoRetryToggle2" onclick="toggleSetting2('auto_retry')"></div>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Automatic Failover</h4>
+                        <p>Switch models seamlessly if one goes offline</p>
+                    </div>
+                    <div class="toggle active" id="failoverToggle2" onclick="toggleSetting2('failover')"></div>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Max Retries</h4>
+                        <p>Maximum attempts per request</p>
+                    </div>
+                    <input type="number" id="retryMax" class="pro-input" value="3" min="1" max="10">
+                </div>
+            </div>
+
+            <!-- Data & System -->
+            <div class="setting-card">
+                <h3>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px;color:var(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                    System Actions
+                </h3>
+                <div style="display:flex;gap:8px;flex-wrap:wrap; margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="handleExportConfig()">Export Config</button>
+                    <button class="btn btn-secondary" onclick="handleExportLogs()">Export Logs</button>
+                    <button class="btn btn-secondary" onclick="window.API.discoverModels();setTimeout(()=>{loadProviders();loadModels()},3000)">Re-discover Models</button>
+                </div>
+                <hr style="border:none;border-top:1px solid rgba(255,255,255,0.05);margin-bottom:16px">
+                <button class="btn btn-primary" onclick="saveSettings()" style="width: 100%; justify-content: center;">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:6px"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                    Save All Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- Session Logs -->
+        <div class="hacker-terminal">
+            <div class="terminal-header">
+                <div class="term-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+                <div class="term-title">Session Logs (Live Engine Feed)</div>
+            </div>
+            <div id="settingsLog" class="terminal-body"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Provider Modal -->
+<div class="modal-overlay" id="addModal">
+    <div class="modal">
+        <h2 id="modalTitle">Add Provider</h2>
+        
+        <div class="preset-section">
+            <p style="color:var(--text-dim);font-size:.75rem;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Quick Add Presets</p>
+            <div class="preset-grid" id="presetButtonsContainer">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+        
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.05);margin:20px 0;">
+        
+        <input type="hidden" id="editIdx" value="-1">
+        <input type="hidden" id="pModel" value="">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="pName" placeholder="e.g. groq, gemini, openrouter">
+        </div>
+        <div class="form-group">
+            <label>API URL</label>
+            <input type="text" id="pUrl" placeholder="https://api.groq.com/openai/v1">
+        </div>
+        <div class="form-group">
+            <label>API Key</label>
+            <input type="text" id="pKey" placeholder="sk-...">
+        </div>
+        <div class="form-group">
+            <label>Priority (lower = higher priority)</label>
+            <input type="number" id="pPriority" value="1" min="1">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="hideAddProvider()">Cancel</button>
+            <button class="btn btn-secondary" onclick="testFromList(parseInt(document.getElementById('editIdx').value))">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:4px;display:inline-block;vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>Test
+            </button>
+            <button class="btn btn-primary" onclick="saveProvider()">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:4px;display:inline-block;vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+<script>
+// Exhaustive Preset provider templates
+const PRESETS = {
+    aihubmix:   { name: 'aihubmix',   url: 'https://aihubmix.com/v1' },
+    anyscale:   { name: 'anyscale',   url: 'https://api.endpoints.anyscale.com/v1' },
+    anthropic:  { name: 'anthropic',  url: 'https://api.anthropic.com/v1' },
+    cloudflare: { name: 'cloudflare', url: 'https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/v1' },
+    cohere:     { name: 'cohere',     url: 'https://api.cohere.ai/v1' },
+    deepinfra:  { name: 'deepinfra',  url: 'https://api.deepinfra.com/v1/openai' },
+    deepseek:   { name: 'deepseek',   url: 'https://api.deepseek.com/v1' },
+    fireworks:  { name: 'fireworks',  url: 'https://api.fireworks.ai/inference/v1' },
+    gemini:     { name: 'gemini',     url: 'https://generativelanguage.googleapis.com/v1beta/openai' },
+    github:     { name: 'github',     url: 'https://models.inference.ai.azure.com' },
+    groq:       { name: 'groq',       url: 'https://api.groq.com/openai/v1' },
+    huggingface:{ name: 'huggingface',url: 'https://api-inference.huggingface.co/v1' },
+    llm7:       { name: 'llm7',       url: 'https://api.llm7.io/v1' },
+    minimax:    { name: 'minimax',    url: 'https://api.minimax.chat/v1' },
+    mistral:    { name: 'mistral',    url: 'https://api.mistral.ai/v1' },
+    novita:     { name: 'novita',     url: 'https://api.novita.ai/v3/openai' },
+    nvidia:     { name: 'nvidia',     url: 'https://integrate.api.nvidia.com/v1' },
+    ollama:     { name: 'ollama',     url: 'http://localhost:11434/v1' },
+    openai:     { name: 'openai',     url: 'https://api.openai.com/v1' },
+    openrouter: { name: 'openrouter', url: 'https://openrouter.ai/api/v1' },
+    perplexity: { name: 'perplexity', url: 'https://api.perplexity.ai' },
+    together:   { name: 'together',   url: 'https://api.together.xyz/v1' },
+    xai:        { name: 'xai',        url: 'https://api.x.ai/v1' },
+    siliconflow:{ name: 'siliconflow',url: 'https://api.siliconflow.cn/v1' }
+};
+
+// Render preset buttons
+const presetContainer = document.getElementById('presetButtonsContainer');
+if (presetContainer) {
+    const keys = Object.keys(PRESETS).sort();
+    presetContainer.innerHTML = keys.map(k => {
+        const name = PRESETS[k].name.charAt(0).toUpperCase() + PRESETS[k].name.slice(1);
+        return `<div class="preset-chip" onclick="addPreset('${k}')">${name}</div>`;
+    }).join('');
+}
+
+window.addPreset = function(key) {
+    const p = PRESETS[key];
+    if (!p) return;
+    document.getElementById('editIdx').value = -1;
+    document.getElementById('modalTitle').textContent = 'Add ' + p.name.charAt(0).toUpperCase() + p.name.slice(1);
+    document.getElementById('pName').value = p.name;
+    document.getElementById('pUrl').value = p.url;
+    document.getElementById('pKey').value = '';
+    document.getElementById('pModel').value = ''; // No model needed initially
+    
+    // Safely check currentProviders length
+    const currentLen = (window.currentProviders && window.currentProviders.length) || 0;
+    document.getElementById('pPriority').value = currentLen + 1;
+    
+    document.getElementById('addModal').classList.add('show');
+    document.getElementById('pKey').focus();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# Claude Proxy Pro - Configuration
+# Auto-generated. Do not edit manually.
+
+port: 8082
+active_idx: 0
+auto_retry: true
+retry_max: 3
+failover: true
+check_interval_seconds: 60
+
+providers:
+  - name: llm7
+    url: https://api.llm7.io/v1
+    key: YOUR_LLM7_KEY
+    model: qwen3-235b
+    priority: 1
+    status: unknown
+    last_check: ""
+    requests_today: 0
+    latency_ms: 0
+    success_count: 0
+    fail_count: 0
+
+  - name: groq
+    url: https://api.groq.com/openai/v1
+    key: YOUR_GROQ_KEY
+    model: llama-3.3-70b-versatile
+    priority: 2
+    status: unknown
+    last_check: ""
+    requests_today: 0
+    latency_ms: 0
+    success_count: 0
+    fail_count: 0
+
+  - name: gemini
+    url: https://generativelanguage.googleapis.com/v1beta/openai
+    key: YOUR_GEMINI_KEY
+    model: gemini-2.0-flash
+    priority: 3
+    status: unknown
+    last_check: ""
+    requests_today: 0
+    latency_ms: 0
+    success_count: 0
+    fail_count: 0
