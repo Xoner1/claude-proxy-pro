@@ -121,8 +121,8 @@ func (a *App) SwitchProvider(idx int) error {
 
 // DiscoverModels triggers model discovery from all providers.
 func (a *App) DiscoverModels() string {
-	go a.pm.DiscoverModels()
-	return "discovery started"
+	a.pm.DiscoverModels()
+	return "discovery completed"
 }
 
 // ── Model Methods ─────────────────────────────────────────────────────────────
