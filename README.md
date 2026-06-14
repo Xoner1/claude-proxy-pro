@@ -60,7 +60,30 @@ The file is buried deep in your system:
 - **Windows:** `%USERPROFILE%\.claude\settings.json`
 
 **We solved this.** We didn't bury this complexity; we destroyed it with Go.
-When you click **"Activate"** on any model in our sleek UI, Claude Proxy Pro's internal engine instantly parses your system's `settings.json`, injects the exact custom aliases (like mapping `claude-3-opus-20240229` directly to `DeepSeek-R1`), safely writes it back to disk at lightning speed, and updates the active endpoint. 
+When you click **"Activate"** on any model in our sleek UI, Claude Proxy Pro's internal engine instantly parses your system's `settings.json`, injects the exact custom aliases, safely writes it back to disk at lightning speed, and updates the active endpoint. 
+
+#### 🔄 The Before & After
+Here is what Claude Proxy Pro automatically injects into your `settings.json` behind the scenes when you select a model like `DeepSeek-R1`:
+
+**Before (Boring Claude Code):**
+```json
+{
+  "customModels": {}
+}
+```
+
+**After (Claude Proxy Pro Magic):**
+```json
+{
+  "customModels": {
+    "claude-3-7-sonnet-20250219": "DeepSeek-R1",
+    "claude-3-5-sonnet-20241022": "DeepSeek-R1",
+    "claude-3-opus-20240229": "DeepSeek-R1",
+    "claude-3-5-haiku-20241022": "DeepSeek-R1"
+  }
+}
+```
+*(No need to leak your real API keys or mess with configurations manually!)*
 
 You never have to touch a JSON file again. You click a button, and the proxy handles the dark magic.
 
