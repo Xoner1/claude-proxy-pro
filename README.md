@@ -52,6 +52,18 @@ Claude Proxy Pro is a **standalone GUI application** that leaves them in the dus
 - **Failover & Auto-Retry:** If a provider goes down, the Stability Engine seamlessly retries or routes to a backup node without breaking your Claude Code session.
 - **Live Hacker Terminal:** Watch your proxy route traffic in real-time with our built-in Matrix-style live system logs.
 
+### 🧠 The Magic Under the Hood: Auto-JSON Injection
+If you've used Claude Code with a custom proxy before, you know the absolute nightmare of constantly opening and editing the Claude Code settings file manually every time you want to switch a model.
+
+The file is buried deep in your system:
+- **macOS / Linux:** `~/.claude/settings.json`
+- **Windows:** `%USERPROFILE%\.claude\settings.json`
+
+**We solved this.** We didn't bury this complexity; we destroyed it with Go.
+When you click **"Activate"** on any model in our sleek UI, Claude Proxy Pro's internal engine instantly parses your system's `settings.json`, injects the exact custom aliases (like mapping `claude-3-opus-20240229` directly to `DeepSeek-R1`), safely writes it back to disk at lightning speed, and updates the active endpoint. 
+
+You never have to touch a JSON file again. You click a button, and the proxy handles the dark magic.
+
 ## 🛠 Installation
 No Node.js. No Python. No dependencies.
 Just head over to the [Releases Page](../../releases) and download the pre-compiled version for your system:
