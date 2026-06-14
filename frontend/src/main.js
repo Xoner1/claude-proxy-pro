@@ -63,6 +63,7 @@ async function nativeAlert(msg) {
 
 // ── State ────────────────────────────────────────────────────────────────────
 let currentModelFilter = 'all';
+let currentProviderFilter = 'all';
 let modelSortField = 'id';
 let modelSortDir = 1;
 let currentModels = [];
@@ -253,6 +254,19 @@ async function loadDashboard() {
             }
         }
 
+        const pf = document.getElementById('providerFilter');
+        if (pf && providers) {
+            const currentSel = pf.value || 'all';
+            pf.innerHTML = '<option value="all" style="background:var(--bg)">All Providers</option>' + 
+                           providers.map(p => '<option value="' + esc(p.name) + '" style="background:var(--bg)">' + esc(p.name) + '</option>').join('');
+            if (providers.some(p => p.name === currentSel)) {
+                pf.value = currentSel;
+            } else {
+                pf.value = 'all';
+                currentProviderFilter = 'all';
+            }
+        }
+
         currentProviders = providers;
         window.currentProviders = providers;
         updateActiveModelText(providers, health.active_idx);
@@ -313,6 +327,7 @@ function renderModels() {
     const search = (document.getElementById('modelSearch')?.value || '').toLowerCase();
     let filtered = currentModels.filter(m => {
         if (currentModelFilter !== 'all' && m.pricing !== currentModelFilter) return false;
+        if (currentProviderFilter !== 'all' && m.provider !== currentProviderFilter) return false;
         if (search && !m.id.toLowerCase().includes(search) && !m.provider.toLowerCase().includes(search)) return false;
         return true;
     });
@@ -358,6 +373,11 @@ function setModelFilter(f, el) {
     currentModelFilter = f;
     document.querySelectorAll('#page-models .seg-item').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
+    renderModels();
+}
+
+function setProviderFilter() {
+    currentProviderFilter = document.getElementById('providerFilter').value;
     renderModels();
 }
 
@@ -476,6 +496,9 @@ async function saveProvider() {
         hideAddProvider();
         loadProviders();
         loadDashboard();
+        
+        // Automatically sync models from the new/updated provider!
+        discoverAll();
     } catch(e) { nativeAlert('Failed to save provider'); }
 }
 
