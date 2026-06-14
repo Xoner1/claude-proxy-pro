@@ -502,6 +502,35 @@ async function saveProvider() {
     } catch(e) { nativeAlert('Failed to save provider'); }
 }
 
+async function testCurrentProvider() {
+    const name = document.getElementById('pName').value || 'Test';
+    const url = document.getElementById('pUrl').value;
+    const key = document.getElementById('pKey').value;
+    const model = document.getElementById('pModel').value || '';
+    
+    if (!url || !key) {
+        nativeAlert('URL and API Key are required to test.');
+        return;
+    }
+    
+    const btn = document.querySelector('.btn-secondary[onclick="testCurrentProvider()"]');
+    if (btn) btn.innerHTML = 'Testing...';
+    
+    try {
+        const result = await API.TestArbitraryProvider(name, url, key, model);
+        if (btn) btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> Test';
+        
+        if (result.error) {
+            nativeAlert('Test Failed!\nError: ' + result.error);
+        } else {
+            nativeAlert('Test Successful! ✅\nStatus: ' + result.status + '\nModels Found: ' + result.model_count);
+        }
+    } catch (e) {
+        if (btn) btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> Test';
+        nativeAlert('Test failed to execute: ' + e);
+    }
+}
+
 async function removeProvider(idx) {
     if (!await nativeConfirm('Remove provider "' + currentProviders[idx].name + '"?')) return;
     try {

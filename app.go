@@ -97,13 +97,35 @@ func (a *App) RemoveProvider(idx int) error {
 	return a.cfg.RemoveProvider(idx)
 }
 
-// TestProvider tests connectivity to a provider.
+// TestProvider tests a saved provider by index.
 func (a *App) TestProvider(idx int) map[string]interface{} {
-	status, latency, modelCount, errMsg := a.pm.TestConnection(idx)
+	status, latency, count, errStr := a.pm.TestConnection(idx)
 	return map[string]interface{}{
 		"status":      status,
 		"latency_ms":  latency,
-		"model_count": modelCount,
+		"model_count": count,
+		"error":       errStr,
+	}
+}
+
+// TestArbitraryProvider tests an unsaved provider directly from the modal.
+func (a *App) TestArbitraryProvider(name, pUrl, key, model string) map[string]interface{} {
+	p := Provider{Name: name, URL: pUrl, Key: key, Model: model}
+	models, err := a.pm.fetchModels(p, -1)
+	status := "online"
+	errMsg := ""
+	if err != nil {
+		if a.pm.pingProvider(p) {
+			status = "online"
+		} else {
+			status = "offline"
+			errMsg = err.Error()
+		}
+	}
+	return map[string]interface{}{
+		"status":      status,
+		"latency_ms":  100, // mock latency for quick test
+		"model_count": len(models),
 		"error":       errMsg,
 	}
 }
