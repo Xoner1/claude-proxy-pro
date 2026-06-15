@@ -4,15 +4,27 @@
 
 > **"You won't have to sell your kidney to use Claude Code anymore! hahaha"** 💸
 
-**Claude Proxy Pro** is an ultra-lightweight, blazing-fast, and standalone desktop application built entirely in **Go** and **Wails**. It serves as an invisible, highly intelligent bridge between Anthropic's amazing [Claude Code](https://github.com/anthropics/claude-code) CLI and **ANY** LLM provider of your choice.
+**Claude Proxy Pro** is an ultra-lightweight, blazing-fast, and standalone native desktop GUI application built entirely in **Go** and **Wails**. It serves as an invisible, highly intelligent bridge between Anthropic's amazing [Claude Code](https://github.com/anthropics/claude-code) CLI and **ANY** LLM provider of your choice.
 
-## 🚨 The Problem: Claude Code is Expensive!
-Recent news and developer reports have highlighted that while Claude Code is arguably the most powerful agentic coding tool available, its heavy reliance on autonomous "thinking" and "tool-use" loops consumes tokens at a terrifying rate. Active developers are reporting API bills upwards of **$150 to $250+ per month**. 
+## 🥊 The Ultimate Comparison: Why We Destroy The Competition
 
-## 🦸‍♂️ The Solution: Claude Proxy Pro
-Instead of relying on heavy Python or Node.js terminal scripts, we built a native, standalone proxy app. 
+If you've looked at other projects like `free-claude-code`, you've seen the painful reality of traditional wrappers. They require you to install Python, manage dependencies, spin up heavy background server processes in your terminal, and constantly check if the connection dropped. 
 
-With **Claude Proxy Pro**, you can instantly route your Claude Code traffic to cheaper (or free!) hyped models that are making waves right now, such as **DeepSeek-R1**, **Kimi**, or **MiniMax**, while keeping the flawless Claude Code terminal experience exactly the same.
+**We put an end to that.**
+
+You won't need to search YouTube for how to run Claude for free with every provider you want to try, and you won't need to enter the terminal and run complex code. Focus on your work, and with our app, **with one click you can change any model from any provider at any time, even in the middle of a session!** No limits for you now. If a provider goes down, switch from the app and Claude will continue with you seamlessly.
+
+| Feature | Claude Proxy Pro 🦀 | Free Claude Code (Py/Node) |
+|---------|---------------------|---------------------------|
+| **Core Engine** | Pure Go (Compiled Native App) | Python / Node.js Scripts |
+| **App Size** | **~9.7 MB** Binary 🔥 | Huge Python/Node Runtimes |
+| **RAM Usage** | **~88 MB** | 150 MB - 300 MB+ |
+| **Installation** | Run directly from source / `.app` | Needs `pip`, `uv`, or `npm` |
+| **Background Processes** | **None.** Pin to Dock and forget. | Requires running terminal servers (`fcc-server`) |
+| **User Interface**| Sleek Native Glassmorphism GUI | Terminal only + clunky local web admin |
+| **Claude Sync** | **100% Automatic** (`settings.json`) | Manual environment variables or scripts |
+
+**Our app is smaller than a wallpaper or a short video.** Just 9.7MB of pure native power. No heavy background servers, no hidden terminal processes that disconnect without you noticing. Everything is right in front of your eyes.
 
 ### ⚡ Architecture Flow
 
@@ -31,39 +43,8 @@ graph LR
     style F fill:#2b2d31,stroke:#666,color:#fff
 ```
 
-### 🥊 Comparison: Why we are better
-Many open-source alternatives (like "Free Claude Code" wrappers) are built using Node.js or Python. While they work, they are heavily bloated, require installing runtimes (npm/pip), and run purely in the terminal. 
-
-Claude Proxy Pro is a **standalone GUI application** that leaves them in the dust:
-
-| Feature | Claude Proxy Pro 🦀 | Free Claude Code (Node/Py) | Electron Alternatives |
-|---------|---------------------|---------------------------|-------------------|
-| **Core Engine** | Pure Go (Compiled) | Node.js / Python scripts | Electron / TypeScript |
-| **RAM Usage** | **~88 MB** 🔥 | ~150 MB - 300 MB | 500 MB+ 🐢 |
-| **Installation** | Single Click (`.app` / `.exe`) | Needs `npm install` or `pip` | Heavy installers |
-| **User Interface**| Sleek Native Glassmorphism UI | Terminal / Command Line only | Clunky Web Views |
-| **Claude Sync** | **100% Automatic** (`settings.json`) | Manual JSON editing | Manual / None |
-| **Stability** | Smart Auto-Failover & Retry | Script crashes on API error | Basic retries |
-
-### 💎 Key Features
-- **Written in pure Go:** Consumes a microscopic **~88MB of RAM**.
-- **Sleek Glassmorphism UI:** A gorgeous, native dashboard to manage your providers and models.
-- **Auto-Syncs with Claude Code:** The moment you select a model in the UI, the proxy automatically injects it into your `~/.claude/settings.json`. Zero manual configuration required.
-- **Failover & Auto-Retry:** If a provider goes down, the Stability Engine seamlessly retries or routes to a backup node without breaking your Claude Code session.
-- **Live Hacker Terminal:** Watch your proxy route traffic in real-time with our built-in Matrix-style live system logs.
-
 ### 🧠 The Magic Under the Hood: Auto-JSON Injection
-If you've used Claude Code with a custom proxy before, you know the absolute nightmare of constantly opening and editing the Claude Code settings file manually every time you want to switch a model.
-
-The file is buried deep in your system:
-- **macOS / Linux:** `~/.claude/settings.json`
-- **Windows:** `%USERPROFILE%\.claude\settings.json`
-
-**We solved this.** We didn't bury this complexity; we destroyed it with Go.
 When you click **"Activate"** on any model in our sleek UI, Claude Proxy Pro's internal engine instantly parses your system's `settings.json`, injects the exact custom aliases, safely writes it back to disk at lightning speed, and updates the active endpoint. 
-
-#### 🔄 The Before & After
-Here is what Claude Proxy Pro automatically injects into your `settings.json` behind the scenes when you select a model like `DeepSeek-R1`:
 
 **Before (Boring Claude Code):**
 ```json
@@ -83,18 +64,38 @@ Here is what Claude Proxy Pro automatically injects into your `settings.json` be
   }
 }
 ```
-*(No need to leak your real API keys or mess with configurations manually!)*
 
 You never have to touch a JSON file again. You click a button, and the proxy handles the dark magic.
 
-## 🛠 Installation
-No Node.js. No Python. No dependencies.
-Just head over to the [Releases Page](../../releases) and download the pre-compiled version for your system:
-- **macOS:** Download the `.app.zip`, extract it, and drag it to Applications.
-- **Windows:** Download the `.exe` and run it.
-- **Linux:** Download the binary and execute it.
+## 🛠 Local Build Instructions (The Hacker Way)
 
-*(Works seamlessly on macOS, Windows, and Linux)*
+Since the code is 100% open source, you don't have to rely on our pre-built binaries or deal with macOS Gatekeeper "Quarantine" warnings. You can compile it locally on your machine in seconds!
+
+Build it once, **pin it to your Dock**, and you have it forever as a permanent desktop app!
+
+### Requirements
+- [Go 1.23+](https://go.dev/dl/) installed.
+- [Wails v2](https://wails.io/docs/gettingstarted/installation) installed (`go install github.com/wailsapp/wails/v2/cmd/wails@latest`).
+
+### 3 Simple Terminal Commands:
+```bash
+# 1. Clone the repository
+git clone https://github.com/Xoner1/claude-proxy-pro.git
+cd claude-proxy-pro
+
+# 2. Build the app locally
+wails build -clean
+
+# 3. Open your brand new Native App!
+# (macOS)
+open build/bin/claude-proxy-pro.app
+# (Windows)
+start build/bin/claude-proxy-pro.exe
+# (Linux)
+./build/bin/claude-proxy-pro
+```
+
+That's it! Drag `claude-proxy-pro.app` to your Applications folder, pin it to your Dock, and enjoy the most powerful AI coding setup on the planet!
 
 ## 🎮 How to use
 1. Open **Claude Proxy Pro**.
