@@ -11,6 +11,7 @@ import {
     UpdateProvider,
     RemoveProvider,
     TestProvider,
+    TestArbitraryProvider,
     SwitchProvider,
     DiscoverModels,
     GetModels,
@@ -37,6 +38,7 @@ const API = {
     async updateProvider(i, p) { return await UpdateProvider(i, p); },
     async removeProvider(i)    { return await RemoveProvider(i); },
     async testProvider(i)      { return await TestProvider(i); },
+    async TestArbitraryProvider(n, u, k, m) { return await TestArbitraryProvider(n, u, k, m); },
     async switchProvider(i)    { return await SwitchProvider(i); },
     async discoverModels()     { return await DiscoverModels(); },
     async getModels()          { return await GetModels(); },
@@ -559,8 +561,9 @@ async function discoverAll() {
     try {
         await API.discoverModels();
         Mascot?.triggerSuccess('Scanning...');
-        nativeAlert('Model discovery started. Refresh in a moment.');
+        nativeAlert('Model discovery complete. Refreshing lists.');
         loadProviders();
+        loadModels();
     } catch(e) {
         Mascot?.triggerError('Scan Failed');
     }
