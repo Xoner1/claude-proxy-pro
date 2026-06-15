@@ -38,6 +38,7 @@ type OAIModelResponse struct {
 // context_window can be either an integer (standard) or an object like llm7.io's {"tokens":240000}
 type OAIModel struct {
 	ID            string          `json:"id"`
+	Name          string          `json:"name"` // Cohere uses this instead of id
 	Object        string          `json:"object"`
 	OwnedBy       string          `json:"owned_by,omitempty"`
 	Created       int64           `json:"created,omitempty"`
@@ -129,8 +130,18 @@ func (pm *ProviderManager) DiscoverModels() {
 
 		// Tag models with provider info and pricing analysis
 		for _, m := range models {
+			modelID := m.ID
+			if modelID == "" && m.Name != "" {
+				modelID = m.Name
+			}
+			
+			// Skip entirely empty models to avoid blank rows
+			if modelID == "" {
+				continue
+			}
+
 			mi := ModelInfo{
-				ID:       m.ID,
+				ID:       modelID,
 				Provider: p.Name,
 				Object:   "model",
 				Latency:  latency,
