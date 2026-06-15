@@ -2,7 +2,7 @@
 
 # 🦀 Claude Proxy Pro
 
-Use Claude Code CLI through a blazing-fast, native desktop application. No background terminal servers, no complex dependencies—just one click to route your traffic to any Anthropic-compatible provider.
+Use Claude Code CLI, VS Code extensions, or any Anthropic-compatible tool through a blazing-fast, native desktop application. No background terminal servers, no Python environments—just one click to route your traffic to any provider.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Go 1.23](https://img.shields.io/badge/Go-1.23-00ADD8.svg?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
@@ -11,7 +11,7 @@ Use Claude Code CLI through a blazing-fast, native desktop application. No backg
 [![Size](https://img.shields.io/badge/Size-9.7_MB-brightgreen.svg?style=for-the-badge)](#)
 [![RAM](https://img.shields.io/badge/RAM_Usage-~88_MB-blue.svg?style=for-the-badge)](#)
 
-[What You Get](#what-you-get) · [Quick Start](#quick-start) · [Providers](#supported-providers) · [The Magic](#the-magic) · [Local Build](#build-it-locally)
+[The Problem](#-the-problem-selling-your-kidney) · [The Solution](#-the-solution-native-dominance) · [Quick Start](#-quick-start) · [Providers](#-supported-providers) · [Local Build](#-build-it-locally-the-hacker-way)
 
 </div>
 
@@ -24,23 +24,49 @@ Use Claude Code CLI through a blazing-fast, native desktop application. No backg
   <em>*App screenshots coming soon!*</em>
 </div>
 
+## 💸 The Problem: Selling Your Kidney
+Let's be honest. Anthropic's Claude Code is arguably the most powerful agentic coding tool available today. It writes code, runs tests, and navigates your codebase like a senior engineer. 
+
+**But there's a massive catch.** 
+Its heavy reliance on autonomous "thinking" and "tool-use" loops consumes tokens at a terrifying, wallet-destroying rate. You buy a $50 credit, type `hello`, Claude decides to read your entire `node_modules` folder to find the context, and boom—your quota is gone. You practically have to sell a kidney just to afford a weekend coding session.
+
+## 🚀 The Solution: Native Dominance
+You need a proxy. But existing open-source proxies (like Python/Node wrappers) are a nightmare:
+- You have to install Python, `pip`, `uv`, or `npm`.
+- You have to run a background server (`proxy-server`) in a terminal tab and pray it doesn't crash.
+- You are forced to run their custom wrapper commands (like `fcc-claude` or `claude-wrapper`) instead of the native `claude` command you know and love.
+- They consume 300MB+ of RAM just to forward JSON requests.
+
+**Claude Proxy Pro puts an end to this madness.**
+
+### 🥊 The Head-to-Head Comparison
+
+| Feature | Claude Proxy Pro 🦀 | Traditional CLI Wrappers (Python/Node) |
+|---------|---------------------|----------------------------------------|
+| **Core Engine** | Pure Go (Compiled Native Desktop App) | Python / Node.js Scripts |
+| **App Size** | **~9.7 MB** Binary 🔥 | 100MB+ Runtimes & Dependencies |
+| **RAM Usage** | **~88 MB** | 150 MB - 300 MB+ |
+| **The Command** | Just type `claude` (Works natively!) | Forced to type `fcc-claude` or wrappers |
+| **IDE Extensions** | Works flawlessly (VS Code / JetBrains) | Break easily / Require complex setups |
+| **Background Processes**| **None.** Pin to Dock and forget. | Requires keeping a terminal server running |
+| **User Interface** | Sleek Native Glassmorphism GUI | Terminal only + clunky local web admin |
+| **Claude Sync** | **100% Automatic** | Manual environment variables or scripts |
+
+**Our app is smaller than your desktop wallpaper.** Just 9.7MB of pure native power. Everything is right in front of your eyes.
+
 ## ✨ What You Get
-
-Unlike traditional CLI wrappers that require installing Python, Node.js, and managing hidden background server processes, **Claude Proxy Pro** is a compiled, standalone native desktop application. 
-
 - **Drop-in Native Proxy:** Routes Claude Code's Anthropic API calls to any provider seamlessly.
-- **Zero Background Servers:** Pin it to your dock. No need to keep a terminal window open or wonder if a background script crashed.
-- **Microscopic Footprint:** A single `~9.7MB` binary that consumes only `~88MB` of RAM.
+- **Zero Background Servers:** Pin it to your dock. No need to keep a terminal window open.
 - **Sleek Glassmorphism UI:** Manage everything through a beautiful dashboard, not a text file.
-- **100% Automatic Sync:** No manual editing of `settings.json` or environment variables. Click "Activate" in the UI, and Claude Code is instantly updated.
+- **100% Automatic Sync:** No manual editing of `settings.json`. Click "Activate" in the UI, and your `claude` command is instantly updated.
 - **Live Hacker Terminal:** Watch your proxy route traffic in real-time with built-in Matrix-style live system logs.
 - **Hot-Swapping:** Change your active provider or model in the middle of a coding session with one click—Claude Code will pick up the change instantly without breaking.
 
-## 🚀 Quick Start
+## ⚡ Quick Start
 
 ### 1. Download the App
 Head over to our [Releases Page](../../releases) and download the pre-compiled version for your system:
-- **macOS:** Download the `.app.zip`, extract it, and drag it to Applications. *(See [Gatekeeper Note](#macos-gatekeeper) below)*
+- **macOS:** Download the `.app.zip`, extract it, and drag it to Applications. *(See [Gatekeeper Note](#-macos-gatekeeper) below)*
 - **Windows:** Download the `.exe` and run it.
 - **Linux:** Download the binary and execute it.
 
@@ -59,7 +85,7 @@ Head over to our [Releases Page](../../releases) and download the pre-compiled v
   <em>*Auto-sync demonstration GIF coming soon!*</em>
 </div>
 
-## 🧠 The Magic
+## 🧠 The Magic: How it works
 
 Traditional proxies force you to manage configuration files manually. You have to locate `~/.claude/settings.json`, copy-paste model hashes, and set environment variables. 
 
