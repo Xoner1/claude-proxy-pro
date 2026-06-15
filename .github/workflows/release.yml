@@ -15,7 +15,7 @@ jobs:
           - os: windows-latest
             platform: windows/amd64
             name: ClaudeProxyPro-Windows.exe
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             platform: linux/amd64
             name: ClaudeProxyPro-Linux
 
