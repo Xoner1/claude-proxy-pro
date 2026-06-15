@@ -1802,21 +1802,38 @@ func EnsureTerminalIntegration() {
 		// Set environment variable persistently in Windows
 		exec.Command("setx", "ANTHROPIC_BASE_URL", "http://localhost:8082/v1").Run()
 	} else {
-		// macOS / Linux: Append to .zshrc and .bashrc if not present
+		// macOS / Linux: Cleanly inject without duplicating or leaving old ports
 		files := []string{".zshrc", ".bashrc", ".bash_profile"}
 		for _, f := range files {
 			path := filepath.Join(home, f)
-			// Only modify if the file already exists
 			if _, err := os.Stat(path); err == nil {
 				data, err := os.ReadFile(path)
-				if err == nil && !strings.Contains(string(data), exportStr) {
-					// Append
-					file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0644)
-					if err == nil {
-						file.WriteString("\n# Claude Proxy Pro Auto-Injection\n" + exportStr + "\n")
-						file.Close()
-					}
+				if err != nil {
+					continue
 				}
+
+				lines := strings.Split(string(data), "\n")
+				var newLines []string
+				hasProxyLine := false
+
+				for _, line := range lines {
+					if strings.Contains(line, "ANTHROPIC_BASE_URL") || strings.Contains(line, "Claude Proxy Pro Auto-Injection") {
+						continue // Filter out old or competitor exports
+					}
+					newLines = append(newLines, line)
+				}
+
+				// Trim trailing empty lines
+				for len(newLines) > 0 && strings.TrimSpace(newLines[len(newLines)-1]) == "" {
+					newLines = newLines[:len(newLines)-1]
+				}
+
+				// Append our clean integration
+				newLines = append(newLines, "")
+				newLines = append(newLines, "# Claude Proxy Pro Auto-Injection")
+				newLines = append(newLines, exportStr)
+
+				os.WriteFile(path, []byte(strings.Join(newLines, "\n")+"\n"), 0644)
 			}
 		}
 	}
