@@ -352,7 +352,6 @@
         <hr style="border:none;border-top:1px solid rgba(255,255,255,0.05);margin:20px 0;">
         
         <input type="hidden" id="editIdx" value="-1">
-        <input type="hidden" id="pModel" value="">
         <div class="form-group">
             <label>Name</label>
             <input type="text" id="pName" placeholder="e.g. groq, gemini, openrouter">
@@ -364,6 +363,10 @@
         <div class="form-group">
             <label>API Key</label>
             <input type="text" id="pKey" placeholder="sk-...">
+        </div>
+        <div class="form-group">
+            <label>Default Model <span style="font-size:0.7rem; color:var(--text-dim); text-transform:none;">(Optional: For providers without /models)</span></label>
+            <input type="text" id="pModel" placeholder="e.g. big-pickle, llama-3-70b">
         </div>
         <div class="form-group">
             <label>Priority (lower = higher priority)</label>
