@@ -8,8 +8,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -1782,6 +1784,42 @@ func updateClaudeSettings(modelName string) {
 	}
 
 	os.WriteFile(settingsPath, newData, 0644)
+
+	// Ensure the terminal integration is set so the user truly doesn't have to type anything manually.
+	EnsureTerminalIntegration()
+}
+
+// EnsureTerminalIntegration automatically sets ANTHROPIC_BASE_URL in the system.
+func EnsureTerminalIntegration() {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return
+	}
+
+	exportStr := "export ANTHROPIC_BASE_URL=http://localhost:8082/v1"
+
+	if runtime.GOOS == "windows" {
+		// Set environment variable persistently in Windows
+		exec.Command("setx", "ANTHROPIC_BASE_URL", "http://localhost:8082/v1").Run()
+	} else {
+		// macOS / Linux: Append to .zshrc and .bashrc if not present
+		files := []string{".zshrc", ".bashrc", ".bash_profile"}
+		for _, f := range files {
+			path := filepath.Join(home, f)
+			// Only modify if the file already exists
+			if _, err := os.Stat(path); err == nil {
+				data, err := os.ReadFile(path)
+				if err == nil && !strings.Contains(string(data), exportStr) {
+					// Append
+					file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0644)
+					if err == nil {
+						file.WriteString("\n# Claude Proxy Pro Auto-Injection\n" + exportStr + "\n")
+						file.Close()
+					}
+				}
+			}
+		}
+	}
 }
 
 // HandleAPIStats returns statistics.

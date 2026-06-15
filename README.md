@@ -84,13 +84,9 @@ Head over to our [Releases Page](../../releases) and download the pre-compiled v
 ### 3. Activate a Model
 1. Go to the **Models** tab and click **Sync Models**.
 2. Pick the model you want (like `DeepSeek-R1` or `claude-3-7-sonnet`) and hit **Activate**.
-3. **Open your terminal, route traffic to your proxy, and run Claude!**
+3. **Open your terminal and run `claude`. That's it!**
 
-```bash
-export ANTHROPIC_BASE_URL=http://localhost:8082/v1
-claude
-```
-*(Pro tip: Add this export to your `~/.zshrc` or `~/.bashrc` so you never have to type it again!)*
+*(Our app automatically injects the necessary routing aliases into your `settings.json` AND automatically adds the `export ANTHROPIC_BASE_URL` to your `~/.zshrc`, `~/.bashrc`, or Windows Registry. You literally do zero manual setup!)*
 
 <div align="center">
   <!-- TODO: Insert Settings Sync GIF Here -->
