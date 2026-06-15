@@ -2,7 +2,7 @@
 
 # 🦀 Claude Proxy Pro
 
-Use Claude Code CLI, VS Code extensions, or any Anthropic-compatible tool through a blazing-fast, native desktop application. No background terminal servers, no Python environments—just one click to route your traffic to any provider.
+Claude Code is Anthropic's AI coding agent — powerful but expensive. Claude Proxy Pro lets you use it for free by routing requests to any AI provider you choose through a blazing-fast, native desktop application. No background terminal servers, no complex dependencies—just one click to route your traffic to any provider.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Go 1.23](https://img.shields.io/badge/Go-1.23-00ADD8.svg?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
@@ -18,10 +18,7 @@ Use Claude Code CLI, VS Code extensions, or any Anthropic-compatible tool throug
 <br>
 
 <div align="center">
-  <!-- TODO: Insert App Screenshot Here -->
   <img src="1781476674.png" alt="Claude Proxy Pro UI" width="700">
-  <br>
-  <em>*App screenshots coming soon!*</em>
 </div>
 
 ## 💸 The Problem
@@ -78,7 +75,13 @@ Head over to our [Releases Page](../../releases) and download the pre-compiled v
 ### 3. Activate a Model
 1. Go to the **Models** tab and click **Sync Models**.
 2. Pick the model you want (like `DeepSeek-R1` or `claude-3-7-sonnet`) and hit **Activate**.
-3. **Open your terminal and run `claude`. That's it!**
+3. **Open your terminal, route traffic to your proxy, and run Claude!**
+
+```bash
+export ANTHROPIC_BASE_URL=http://localhost:8082/v1
+claude
+```
+*(Pro tip: Add this export to your `~/.zshrc` or `~/.bashrc` so you never have to type it again!)*
 
 <div align="center">
   <!-- TODO: Insert Settings Sync GIF Here -->
@@ -138,6 +141,7 @@ start build/bin/claude-proxy-pro.exe
 Claude Proxy Pro supports **ANY** provider that exposes an OpenAI-compatible `/v1/models` and `/v1/chat/completions` endpoint, or native Anthropic endpoints. 
 
 Our Quick-Add presets currently include:
+- **llm7.io** (`https://api.llm7.io/v1`) - *FREE 5M tokens/day!*
 - **OpenRouter** (`https://openrouter.ai/api/v1`)
 - **DeepSeek** (`https://api.deepseek.com/v1`)
 - **OpenCode Zen** (`https://opencode.ai/zen/v1`)
