@@ -72,7 +72,7 @@ You need a proxy. But existing open-source proxies (like Python/Node wrappers) a
 
 ### 1. Download the App
 Head over to our [Releases Page](../../releases) and download the pre-compiled version for your system:
-- **macOS:** Download the `.app.zip`, extract it, and drag it to Applications. *(See [Gatekeeper Note](#-macos-gatekeeper) below)*
+- **macOS:** Download the `.dmg` file, open it, and drag the app to your Applications folder. *(See [Gatekeeper Note](#-macos-gatekeeper) below)*
 - **Windows:** Download the `.exe` and run it.
 - **Linux:** Download the binary and execute it.
 
@@ -153,19 +153,17 @@ Our Quick-Add presets currently include:
 - **OpenCode Go** (`https://opencode.ai/zen/go/v1`)
 - **Groq**, **Together**, **Ollama**, **Mistral**, and many more!
 
-## 🍎 macOS Gatekeeper (Important!)
+## 🍎 macOS Gatekeeper
 
-If you download the pre-compiled `.app.zip` release on macOS, Apple's Gatekeeper may quarantine the app and tell you **"App is damaged and can't be opened. You should move it to the Trash."** 
-
-Don't panic! It is **not** damaged. This happens because we are an open-source project and haven't paid Apple $99/year for a Developer Certificate to sign the binary.
+Since we are an open-source project and haven't paid Apple $99/year for a Developer Certificate, macOS will show a warning saying **"Developer cannot be verified"** when you first open the app.
 
 **The 3-Second Fix:**
-1. Extract the `.zip` and drag `claude-proxy-pro.app` to your **Applications** folder.
-2. Open your Terminal and paste this exact command to remove the quarantine flag:
-```bash
-xattr -cr /Applications/claude-proxy-pro.app
-```
-3. Open the app from your Applications folder normally. It will run perfectly!
+1. Open your **Applications** folder.
+2. **Right-Click** (or Control+Click) on `Claude Proxy Pro`.
+3. Select **Open** from the menu.
+4. Click **Open** again on the warning dialog.
+
+*(You only need to do this once!)*
 
 ---
 

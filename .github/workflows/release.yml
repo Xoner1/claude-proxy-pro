@@ -14,7 +14,7 @@ jobs:
         include:
           - os: macos-latest
             platform: darwin/universal
-            name: ClaudeProxyPro-Mac.app.zip
+            name: ClaudeProxyPro-Mac.dmg
           - os: windows-latest
             platform: windows/amd64
             name: ClaudeProxyPro-Windows.exe
@@ -43,9 +43,12 @@ jobs:
       - name: Build App
         run: wails build -platform ${{ matrix.platform }} -clean
 
-      - name: Zip Mac App (macOS only)
+      - name: Package Mac App to DMG (macOS only)
         if: runner.os == 'macOS'
-        run: cd build/bin && zip -r ../../${{ matrix.name }} claude-proxy-pro.app
+        run: |
+          cd build/bin
+          codesign --deep --force --sign - claude-proxy-pro.app
+          hdiutil create -volname "Claude Proxy Pro" -srcfolder claude-proxy-pro.app -ov -format UDZO ../../${{ matrix.name }}
 
       - name: Copy Binary (Windows/Linux)
         if: runner.os != 'macOS'
